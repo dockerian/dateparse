@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/apcera/termtables"
-	"github.com/araddon/dateparse"
+	"github.com/dockerian/dateparse"
 )
 
 var (
@@ -21,7 +21,7 @@ func main() {
 	if len(flag.Args()) == 0 {
 		fmt.Println(`Must pass a time, and optional location:
 
-		./dateparse "2009-08-12T22:15:09.99Z" 
+		./dateparse "2009-08-12T22:15:09.99Z"
 
 		./dateparse --timezone="America/Denver" "2017-07-19 03:21:51+00:00"
 		`)

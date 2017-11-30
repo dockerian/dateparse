@@ -6,10 +6,21 @@ package dateparse
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 	"unicode"
 	"unicode/utf8"
 )
+
+// NOTE [2017-11-30] merge changes from https://github.com/noaway/dateparse
+//       _           _
+//      | |         | |
+//    __| |   __ _  | |_    ___   _ __     __ _   _ __   ___    ___
+//   / _` |  / _` | | __|  / _ \ | '_ \   / _` | | '__| / __|  / _ \
+//  | (_| | | (_| | | |_  |  __/ | |_) | | (_| | | |    \__ \ |  __/
+//   \__,_|  \__,_|  \__|  \___| | .__/   \__,_| |_|    |___/  \___|
+//                               | |
+//                               |_|
 
 type dateState int
 
@@ -59,6 +70,12 @@ const (
 	stateWeekdayAbbrevComma
 	stateWeekdayAbbrevCommaOffset
 	stateWeekdayAbbrevCommaOffsetZone
+	stateHowLongAgo
+)
+
+const (
+	// Day represent 24 hours in integer (Nanosecond)
+	Day = time.Hour * 24
 )
 
 var (
@@ -215,8 +232,8 @@ iterRunes:
 					// go doesn't seem to parse this one natively?   or did i miss it?
 					t, err := parse("2006-01-02 03:04:05", datestr[:i], loc)
 					if err == nil {
-						ms, err := strconv.Atoi(datestr[i+1:])
-						if err == nil {
+						ms, errAtoi := strconv.Atoi(datestr[i+1:])
+						if errAtoi == nil {
 							return time.Unix(0, t.UnixNano()+int64(ms)*1e6), nil
 						}
 					}
@@ -430,6 +447,12 @@ iterRunes:
 				return parse("02 Jan 2006, 15:04", datestr, loc)
 			case len(datestr) == len("02 Jan 2006, 15:04:05"):
 				return parse("02 Jan 2006, 15:04:05", datestr, loc)
+			case len(datestr) == len("2006年01月02日"):
+				return parse("2006年01月02日", datestr, loc)
+			case len(datestr) == len("2006年01月02日 15:04"):
+				return parse("2006年01月02日 15:04", datestr, loc)
+			case strings.Contains(datestr, "ago"):
+				state = stateHowLongAgo
 			}
 		case stateAlpha: // starts alpha
 			// stateAlphaWS
@@ -524,6 +547,10 @@ iterRunes:
 
 		case stateAlphaWSDigitComma: // Starts Alpha, whitespace, digit, comma
 			// May 8, 2009 5:57:51 PM
+			// May 8, 2009
+			if len(datestr) == len("May 8, 2009") {
+				return parse("Jan 2, 2006", datestr, loc)
+			}
 			return parse("Jan 2, 2006 3:04:05 PM", datestr, loc)
 
 		case stateAlphaWSAlpha: // Alpha, whitespace, alpha
@@ -888,7 +915,28 @@ iterRunes:
 	case stateWeekdayAbbrevCommaOffsetZone:
 		// Tue, 11 Jul 2017 16:28:13 +0200 (CEST)
 		return parse("Mon, 02 Jan 2006 15:04:05 -0700 (CEST)", datestr, loc)
+	case stateHowLongAgo:
+		// 1 minutes ago
+		// 1 hours ago
+		// 1 day ago
+		switch len(datestr) {
+		case len("1 minutes ago"), len("10 minutes ago"), len("100 minutes ago"):
+			return agoTime(datestr, time.Minute)
+		case len("1 hours ago"), len("10 hours ago"):
+			return agoTime(datestr, time.Hour)
+		case len("1 day ago"), len("10 day ago"):
+			return agoTime(datestr, Day)
+		}
 	}
 
 	return time.Time{}, fmt.Errorf("Could not find date format for %s", datestr)
+}
+
+func agoTime(datestr string, d time.Duration) (time.Time, error) {
+	dstrs := strings.Split(datestr, " ")
+	m, err := strconv.Atoi(dstrs[0])
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.Now().Add(-d * time.Duration(m)), nil
 }

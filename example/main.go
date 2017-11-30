@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/apcera/termtables"
-	"github.com/araddon/dateparse"
+	"github.com/dockerian/dateparse"
 )
 
 var examples = []string{
@@ -79,6 +79,13 @@ var examples = []string{
 	// unix seconds, ms
 	"1332151919",
 	"1384216367189",
+	// Chinese date
+	"2017年11月09日",
+	"2017年11月01日 09:41",
+	// How long ago
+	"1 day ago",
+	"19 hours ago",
+	"26 minutes ago",
 }
 
 var (

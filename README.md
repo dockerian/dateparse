@@ -1,14 +1,13 @@
-Go Date Parser 
+Go Date Parser
 ---------------------------
 
-Parse any date string without knowing format in advance.  Uses a scanner to read bytes and use a state machine to find format.  Much faster than shotgun based parse methods.  See [bench_test.go](https://github.com/araddon/dateparse/blob/master/bench_test.go) for performance comparison.
+Parse any date string without knowing format in advance.  Uses a scanner to read bytes and use a state machine to find format.  Much faster than shotgun based parse methods.  See [bench_test.go](https://github.com/dockerian/dateparse/blob/master/bench_test.go) for performance comparison.
 
 
-[![Code Coverage](https://codecov.io/gh/araddon/dateparse/branch/master/graph/badge.svg)](https://codecov.io/gh/araddon/dateparse)
-[![GoDoc](https://godoc.org/github.com/araddon/dateparse?status.svg)](http://godoc.org/github.com/araddon/dateparse)
-[![Build Status](https://travis-ci.org/araddon/dateparse.svg?branch=master)](https://travis-ci.org/araddon/dateparse)
-[![Go ReportCard](https://goreportcard.com/badge/araddon/dateparse)](https://goreportcard.com/report/araddon/dateparse)
-
+[![Code Coverage](https://codecov.io/gh/dockerian/dateparse/branch/master/graph/badge.svg)](https://codecov.io/gh/dockerian/dateparse)
+[![GoDoc](https://godoc.org/github.com/dockerian/dateparse?status.svg)](http://godoc.org/github.com/dockerian/dateparse)
+[![Build Status](https://travis-ci.org/dockerian/dateparse.svg?branch=master)](https://travis-ci.org/dockerian/dateparse)
+[![Go ReportCard](https://goreportcard.com/badge/dockerian/dateparse)](https://goreportcard.com/report/dockerian/dateparse)
 
 **Timezones** The location your server is configured effects the results!  See example or https://play.golang.org/p/IDHRalIyXh and last paragraph here https://golang.org/pkg/time/#Parse.
 
@@ -19,7 +18,7 @@ Parse any date string without knowing format in advance.  Uses a scanner to read
 t, err := dateparse.ParseAny("3/1/2014")
 
 // Parse with Location, equivalent to time.ParseInLocation() timezone/offset
-// rules.  Using location arg, if timezone/offset info exists in the 
+// rules.  Using location arg, if timezone/offset info exists in the
 // datestring, it uses the given location rules for any zone interpretation.
 // That is, MST means one thing when using America/Denver and something else
 // in other locations.
@@ -40,13 +39,13 @@ t, err := dateparse.ParseIn("3/1/2014", time.Local)
 cli tool for testing dateformats
 ----------------------------------
 
-[Date Parse CLI](https://github.com/araddon/dateparse/blob/master/dateparse)
+[Date Parse CLI](https://github.com/dockerian/dateparse/blob/master/cli)
 
 
 Extended example
 -------------------
 
-https://github.com/araddon/dateparse/blob/master/example/main.go
+https://github.com/dockerian/dateparse/blob/master/example/main.go
 
 ```go
 package main
@@ -57,7 +56,7 @@ import (
 	"time"
 
 	"github.com/apcera/termtables"
-	"github.com/araddon/dateparse"
+	"github.com/dockerian/dateparse"
 )
 
 var examples = []string{
@@ -130,6 +129,13 @@ var examples = []string{
 	// unix seconds, ms
 	"1332151919",
 	"1384216367189",
+	// Chinese date
+	"2017年11月09日",
+	"2017年11月01日 09:41",
+	// How long ago
+	"1 day ago",
+	"19 hours ago",
+	"26 minutes ago",
 }
 
 var (
