@@ -488,6 +488,26 @@ func TestParse(t *testing.T) {
 
 	_, err = ParseAny("-1314")
 	assert.NotEqual(t, nil, err)
+
+	_, err = ParseAny("May 8, 2009")
+	assert.Nil(t, err)
+
+	_, err = ParseAny("2006年01月02日")
+	assert.Nil(t, err)
+
+	_, err = ParseAny("2006年01月02日 15:04:00")
+	assert.Nil(t, err)
+
+	_, err = ParseAny("xx day ago")
+	assert.NotNil(t, err)
+
+	for _, test := range []string{
+		"now", "today", "yesterday", "tomorrow", "1 day ago", "1 hours ago", "1 minutes ago",
+	} {
+		_, err = ParseAny(test)
+		assert.Nil(t, err)
+	}
+
 }
 
 func testDidPanic(datestr string) (paniced bool) {

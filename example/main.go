@@ -81,11 +81,15 @@ var examples = []string{
 	"1384216367189",
 	// Chinese date
 	"2017年11月09日",
-	"2017年11月01日 09:41",
+	"2017年11月01日 09:41:00",
 	// How long ago
 	"1 day ago",
 	"19 hours ago",
 	"26 minutes ago",
+	"now",
+	"today",
+	"tomorrow",
+	"yesterday",
 }
 
 var (

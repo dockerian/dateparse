@@ -41,8 +41,11 @@ func main() {
 		loc = l
 	}
 
-	zonename, _ := time.Now().In(time.Local).Zone()
-	fmt.Printf("\nYour Current time.Local zone is %v\n\n", zonename)
+	zonename, zoneOffset := time.Now().In(time.Local).Zone()
+	fmt.Printf("\nCurrent time.Local zone: %v [%+03d00]\n", zonename, zoneOffset/3600)
+	now := time.Now()
+	fmt.Printf("\nNow: %v | %v\n", now.Local(), now.UTC())
+	fmt.Println()
 
 	table := termtables.CreateTable()
 

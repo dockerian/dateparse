@@ -134,6 +134,18 @@ func parse(layout, datestr string, loc *time.Location) (time.Time, error) {
 }
 
 func parseTime(datestr string, loc *time.Location) (time.Time, error) {
+	now := time.Now()
+	switch strings.ToLower(datestr) {
+	case "now":
+		return now, nil
+	case "today":
+		today := fmt.Sprintf("%4d-%02d-%02dT00:00:00Z", now.Year(), now.Month(), now.Day())
+		return time.Parse(time.RFC3339, today)
+	case "tomorrow":
+		return now.AddDate(0, 0, 1), nil
+	case "yesterday":
+		return now.AddDate(0, 0, -1), nil
+	}
 	state := stateStart
 
 	firstSlash := 0
